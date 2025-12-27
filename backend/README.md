@@ -370,7 +370,10 @@ uv run alembic upgrade head
 ## 11. Makefile（オプション）
 
 ```makefile
-.PHONY: migrate migrate-gen
+include .env
+.EXPORT_ALL_VARIABLES:
+
+.PHONY: migrate migrate-gen lint format
 
 migrate:
 	cd backend && uv run alembic upgrade head
@@ -378,6 +381,170 @@ migrate:
 migrate-gen:
 	@read -p "Migration message: " msg; \
 	cd backend && uv run alembic revision --autogenerate -m "$$msg"
+
+lint:
+	cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy .
+
+format:
+	cd backend && uv run ruff check --fix . && uv run ruff format .
+```
+
+## 12. Linter / 型チェック導入（ruff, mypy）
+
+### インストール
+
+```bash
+cd backend
+uv add --dev ruff mypy
+```
+
+### pyproject.toml に設定を追加
+
+```toml
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+]
+ignore = [
+    "B008",  # function call in default argument (FastAPI Depends pattern)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/env.py" = ["E402"]  # module level import not at top (alembic structure)
+
+[tool.mypy]
+python_version = "3.13"
+mypy_path = "."
+explicit_package_bases = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "entity.*"
+disable_error_code = ["misc"]  # SQLAlchemy Base subclass issue
+```
+
+### mypy 設定の解説
+
+| 設定 | 説明 |
+|------|------|
+| `python_version` | 対象のPythonバージョン |
+| `mypy_path` | モジュール検索パス（`.`でカレントディレクトリ） |
+| `explicit_package_bases` | パッケージルートを明示的に指定 |
+| `warn_return_any` | `Any`型を返す関数に警告 |
+| `warn_unused_configs` | 未使用の設定に警告 |
+| `disallow_untyped_defs` | 型アノテーションのない関数定義を禁止 |
+| `disallow_incomplete_defs` | 部分的な型アノテーションを禁止 |
+| `check_untyped_defs` | 型アノテーションのない関数も型チェック |
+| `disallow_untyped_decorators` | 型のないデコレータを禁止 |
+| `no_implicit_optional` | 暗黙の`Optional`を禁止（`None`デフォルト時） |
+| `warn_redundant_casts` | 不要なキャストに警告 |
+| `warn_unused_ignores` | 未使用の`# type: ignore`に警告 |
+| `warn_no_return` | 戻り値がない関数に警告 |
+| `warn_unreachable` | 到達不能コードに警告 |
+| `ignore_missing_imports` | 型スタブのないライブラリのimportエラーを無視 |
+
+#### overrides セクション
+
+```toml
+[[tool.mypy.overrides]]
+module = "entity.*"
+disable_error_code = ["misc"]
+```
+
+SQLAlchemyの`declarative_base()`が返す`Base`は型が`Any`になるため、サブクラス化すると`misc`エラーが発生する。`entity`モジュールではこのエラーを無視する設定。
+
+### Dockerでは本番用依存のみインストール
+
+`docker/Dockerfile` で `--no-dev` を指定：
+
+```dockerfile
+RUN uv sync --frozen --no-dev --no-install-project
+COPY . .
+RUN uv sync --frozen --no-dev
+```
+
+### 実行方法
+
+```bash
+# チェックのみ
+make lint
+
+# 自動修正
+make format
+```
+
+### VS Code 設定（リポジトリルートから開く場合）
+
+`.vscode/settings.json`:
+
+```json
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+  "mypy-type-checker.cwd": "${workspaceFolder}/backend",
+  "mypy-type-checker.args": ["--config-file=${workspaceFolder}/backend/pyproject.toml"]
+}
+```
+
+## 13. GitHub Actions CI
+
+`.github/workflows/ci.yml`:
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Run ruff check
+        run: uv run ruff check .
+
+      - name: Run ruff format check
+        run: uv run ruff format --check .
+
+      - name: Run mypy
+        run: uv run mypy .
 ```
 
 ---
@@ -401,6 +568,8 @@ open http://localhost:8000/docs
 | `docker compose logs -f api` | ログ表示 |
 | `make migrate` | マイグレーション実行 |
 | `make migrate-gen` | マイグレーションファイル生成 |
+| `make lint` | Linter / 型チェック実行 |
+| `make format` | コード自動整形 |
 
 ## 注意事項
 
