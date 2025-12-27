@@ -8,17 +8,21 @@ services:
     volumes:
       - ./backend:/app
       - /app/.venv
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=mysql+pymysql://root:password@db:3306/mydatabase
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
     command: ["uv", "run", "fastapi", "dev", "--host", "0.0.0.0", "--port", "8000"]
     depends_on:
       - db
       - opensearch
   db:
     image: mysql:8.0
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: mydatabase
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - 3309:3306
     volumes:
