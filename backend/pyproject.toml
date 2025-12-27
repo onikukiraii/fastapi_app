@@ -3,7 +3,7 @@ name = "backend"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.17.2",
     "cryptography>=46.0.3",
@@ -19,7 +19,7 @@ dev = [
 ]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py314"
 line-length = 120
 
 [tool.ruff.format]
@@ -42,7 +42,7 @@ ignore = [
 "alembic/env.py" = ["E402"]  # module level import not at top (alembic structure)
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 mypy_path = "."
 explicit_package_bases = true
 warn_return_any = true
