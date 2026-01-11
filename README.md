@@ -21,22 +21,6 @@ FastAPI + HTMX で作る Web アプリケーションのテンプレート
 ```bash
 # macOS (Homebrew)
 brew install mise
-
-# その他の方法は公式ドキュメントを参照
-# https://mise.jdx.dev/getting-started.html
-```
-
-シェルへの統合も忘れずに:
-
-```bash
-# bash
-echo 'eval "$(mise activate bash)"' >> ~/.bashrc
-
-# zsh
-echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
-
-# fish
-echo 'mise activate fish | source' >> ~/.config/fish/config.fish
 ```
 
 ### 2. リポジトリをクローン
