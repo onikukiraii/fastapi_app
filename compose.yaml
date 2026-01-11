@@ -12,6 +12,7 @@ services:
       - .env
     environment:
       DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
+      OPENSEARCH_URL: http://opensearch:9200
     command: ["uv", "run", "fastapi", "dev", "--host", "0.0.0.0", "--port", "8000"]
     depends_on:
       - db
@@ -35,7 +36,7 @@ services:
       - plugins.security.disabled=true
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Admin123!
     ports:
-      - 9205:9205
+      - 9205:9200
     volumes:
       - opensearch-data:/usr/share/opensearch/data
 

@@ -8,6 +8,7 @@ dependencies = [
     "alembic>=1.17.2",
     "cryptography>=46.0.3",
     "fastapi[standard]>=0.115.0",
+    "opensearch-py>=2.8.0",
     "pymysql>=1.1.2",
     "sqlalchemy>=2.0.45",
 ]
