@@ -1,5 +1,0 @@
-{
-  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
-  "mypy-type-checker.cwd": "${workspaceFolder}/backend",
-  "mypy-type-checker.args": ["--config-file=${workspaceFolder}/backend/pyproject.toml"]
-}
