@@ -46,13 +46,35 @@ cp .env.template .env
 cp frontend/.env.example frontend/.env
 ```
 
-必要に応じて `.env` を編集してください。
+`.env` を開いて、プロジェクトに合わせて以下を変更してください:
+
+| 変数 | デフォルト値 | 説明 |
+|------|-------------|------|
+| `MYSQL_DATABASE` | `mydatabase` | **プロジェクト名に変更推奨**（例: `myapp`） |
+| `MYSQL_USER` | `app` | アプリ用DBユーザー名 |
+| `MYSQL_PASSWORD` | `password` | アプリ用DBパスワード |
+| `MYSQL_ROOT_PASSWORD` | `password` | MySQL rootパスワード |
+
+> **注意**: `MYSQL_USER` に `root` は指定できません。MySQL公式イメージが拒否します。
+> rootとは別の一般ユーザーを作成するための変数です。
+
+`DATABASE_URL` も `MYSQL_USER` / `MYSQL_DATABASE` の変更に合わせて更新してください:
+
+```
+DATABASE_URL=mysql+pymysql://<MYSQL_USER>:<MYSQL_PASSWORD>@localhost:3309/<MYSQL_DATABASE>
+```
 
 ### 5. Docker Compose で起動
 
 ```bash
 docker compose up -d
 ```
+
+> **Tips**: `.env` の DB設定を変更した後や、DBコンテナが起動しない場合は、ボリュームを削除して再作成してください:
+> ```bash
+> docker compose down -v
+> docker compose up -d
+> ```
 
 以下のサービスが起動します:
 - **Frontend**: http://localhost:5173
