@@ -96,3 +96,63 @@ app.include_router(user_router)
 - Swagger UI: http://localhost:8000/docs
 - 一覧取得: `curl http://localhost:8000/products/`
 - 作成: `curl -X POST http://localhost:8000/products/ -H "Content-Type: application/json" -d '{"name": "Test", "price": 100}'`
+
+---
+
+## よく使うパターン
+
+### クロスフィールドバリデーション
+
+複数フィールドの整合性を検証したい場合は `@model_validator` を使う:
+
+```python
+from pydantic import BaseModel, model_validator
+
+
+class DateRangeParams(BaseModel):
+    start_date: str
+    end_date: str
+
+    @model_validator(mode="after")
+    def validate_date_range(self) -> "DateRangeParams":
+        if self.start_date > self.end_date:
+            msg = "start_date は end_date より前である必要があります"
+            raise ValueError(msg)
+        return self
+```
+
+### N+1 対策 (joinedload)
+
+リレーションを持つモデルの一覧取得で N+1 問題を防ぐ:
+
+```python
+from sqlalchemy.orm import joinedload
+
+
+@router.get("/", response_model=list[ProductResponse])
+def get_products(db: Session = Depends(get_db)):
+    return db.query(Product).options(joinedload(Product.category)).all()
+```
+
+### ORM → Response 変換ヘルパー
+
+ORM モデルからレスポンススキーマへの変換をルーター内に `_to_response` として定義する:
+
+```python
+def _to_response(product: Product) -> ProductResponse:
+    return ProductResponse(
+        id=product.id,
+        name=product.name,
+        price=product.price,
+        category_name=product.category.name if product.category else None,
+        created_at=product.created_at,
+    )
+
+
+@router.get("/", response_model=list[ProductResponse])
+def get_products(db: Session = Depends(get_db)):
+    products = db.query(Product).options(joinedload(Product.category)).all()
+    return [_to_response(p) for p in products]
+```
+
+`from_attributes = True` で自動変換できる場合は不要。リレーションの展開やフィールド加工が必要なときに使う。
