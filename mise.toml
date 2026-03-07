@@ -1,6 +1,7 @@
 [tools]
 python = "3.14.2"
 uv = "latest"
+node = "22"
 
 [env]
 _.file = ".env"
@@ -33,6 +34,43 @@ run = [
 dir = "backend"
 
 [tasks.dev]
-description = "Start development server"
+description = "Start backend development server"
 run = "uv run fastapi dev"
 dir = "backend"
+
+[tasks."dev:front"]
+description = "Start frontend development server"
+run = "npm run dev"
+dir = "frontend"
+
+[tasks."lint:front"]
+description = "Run frontend linters (ESLint + tsc)"
+run = [
+  "npm run lint",
+  "npx tsc --noEmit"
+]
+dir = "frontend"
+
+[tasks."lint:all"]
+description = "Run all linters"
+depends = ["lint", "lint:front"]
+
+[tasks."build:front"]
+description = "Build frontend for production"
+run = "npm run build"
+dir = "frontend"
+
+[tasks.generate-api]
+description = "Generate TypeScript types from OpenAPI schema"
+run = "npm run generate-api"
+dir = "frontend"
+
+[tasks."format:front"]
+description = "Fix frontend lint issues"
+run = "npm run lint -- --fix"
+dir = "frontend"
+
+[tasks."test:front"]
+description = "Run frontend tests"
+run = "npm test"
+dir = "frontend"
