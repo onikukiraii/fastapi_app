@@ -70,7 +70,16 @@ description = "Fix frontend lint issues"
 run = "npm run lint -- --fix"
 dir = "frontend"
 
+[tasks.test]
+description = "Run backend tests"
+run = "uv run pytest -v"
+dir = "backend"
+
 [tasks."test:front"]
 description = "Run frontend tests"
 run = "npm test"
 dir = "frontend"
+
+[tasks."test:all"]
+description = "Run all tests (backend + frontend)"
+depends = ["test", "test:front"]
