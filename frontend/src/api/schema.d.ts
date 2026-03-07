@@ -6,14 +6,47 @@
  */
 
 export interface paths {
-  // API エンドポイントがここに生成される
+  '/users/': {
+    get: {
+      responses: {
+        200: {
+          content: {
+            'application/json': components['schemas']['UserResponse'][]
+          }
+        }
+      }
+    }
+    post: {
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UserCreateParams']
+        }
+      }
+      responses: {
+        200: {
+          content: {
+            'application/json': components['schemas']['UserResponse']
+          }
+        }
+      }
+    }
+  }
 }
 
 export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
-    // スキーマがここに生成される
+    UserResponse: {
+      id: number
+      name: string
+      email: string
+      created_at: string
+    }
+    UserCreateParams: {
+      name: string
+      email: string
+    }
   }
   responses: never
   parameters: never

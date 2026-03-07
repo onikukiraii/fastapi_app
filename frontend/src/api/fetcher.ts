@@ -24,15 +24,22 @@ export function unwrap<T>(result: { data?: T; error?: unknown }): T {
   return result.data as T
 }
 
-// --- サンプル API オブジェクト ---
-// import type { components } from './schema'
-// type ItemResponse = components['schemas']['ItemResponse']
-//
-// export const itemsApi = {
-//   list: async () => {
-//     const res = await api.GET('/items/')
-//     return unwrap<ItemResponse[]>(res)
-//   },
-// }
+// --- Users ---
+
+import type { components } from './schema'
+
+type UserResponse = components['schemas']['UserResponse']
+type UserCreateParams = components['schemas']['UserCreateParams']
+
+export const usersApi = {
+  list: async () => {
+    const res = await api.GET('/users/')
+    return unwrap<UserResponse[]>(res)
+  },
+  create: async (body: UserCreateParams) => {
+    const res = await api.POST('/users/', { body })
+    return unwrap<UserResponse>(res)
+  },
+}
 
 export { api }
