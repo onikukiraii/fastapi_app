@@ -1,3 +1,8 @@
+---
+paths:
+  - "frontend/**"
+---
+
 # Frontend
 
 React 19 + TypeScript 5.9 + Vite 7 + Tailwind CSS v4
