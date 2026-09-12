@@ -13,7 +13,7 @@ dir = "backend"
 
 [tasks.migrate-gen]
 description = "Generate a new migration file"
-run = "uv run alembic revision --autogenerate -m '{{arg(name=\"message\")}}'"
+run = "uv run alembic revision --autogenerate -m {{arg(name=\"message\")}}"
 dir = "backend"
 
 [tasks.lint]
