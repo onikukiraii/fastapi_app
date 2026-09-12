@@ -123,6 +123,9 @@ mise run generate-api
 ### ローカル開発（Docker を使わずに実行）
 
 ```bash
+# フロントエンドの依存関係をインストール（初回のみ）
+npm install --prefix frontend
+
 # バックエンド開発サーバー起動
 mise run dev
 
@@ -182,7 +185,7 @@ mise tasks  # 利用可能なタスク一覧を表示
 
 ### ディレクトリ構成
 
-バックエンドは機能（ドメイン）単位でディレクトリを分割しています。1つの機能に関するコードを1つのディレクトリに集約し、抽象インターフェースは各機能の `protocol.py` のみで定義します。詳細は [backend/README.md](backend/README.md) を参照してください。
+バックエンドは機能（ドメイン）単位でディレクトリを分割しています。1つの機能に関するコードを1つのディレクトリに集約し、抽象インターフェースは各機能の `protocol.py` のみで定義します。配置と依存の向きの詳細は [docs/architecture.md](docs/architecture.md) を参照してください。
 
 ```
 .
@@ -214,7 +217,7 @@ mise tasks  # 利用可能なタスク一覧を表示
 └── .env.template
 ```
 
-フロントエンドの詳細は [frontend/README.md](frontend/README.md) を参照してください。
+バックエンドの API 一覧・環境変数・不要な機能の削除手順は [backend/README.md](backend/README.md) にあります。
 
 ## ライセンス (License)
 

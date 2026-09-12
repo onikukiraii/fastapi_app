@@ -39,7 +39,12 @@ export const usersApi = {
 ## UI 部品
 
 - UI コンポーネントは shadcn/ui を最優先で使用し、shadcn/ui に存在しないプリミティブのみ Radix UI を直接利用する。
-- `src/components/ui/` は shadcn/ui の CLI が自動生成するディレクトリである。手動での直接編集は行わず、ESLint の検証対象からも除外している。新しい部品が必要な場合は CLI コマンドで追加する。
+- `src/components/ui/` は shadcn/ui の CLI が自動生成するディレクトリである。手動での直接編集は行わず、ESLint の検証対象からも除外している。新しい部品が必要な場合は、以下の CLI コマンドで追加する。
+
+  ```bash
+  cd frontend && npx shadcn add <component-name>
+  ```
+
 - チェックボックスの状態表示などの標準的な振る舞いは、導入済みの UI コンポーネントに委譲し、独自に自作（手組み）しない。
 
 ## 状態

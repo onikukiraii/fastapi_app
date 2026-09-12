@@ -6,63 +6,6 @@ FastAPI + SQLAlchemy + Alembic / Python 3.14 / パッケージ管理: uv
 
 新規機能の追加手順は [docs/new-api.md](../docs/new-api.md)、テーブルの追加手順は [docs/new-model.md](../docs/new-model.md) を参照してください。また、アーキテクチャ設計規約は [docs/architecture.md](../docs/architecture.md)、バックエンド実装規約は [docs/backend.md](../docs/backend.md)、データベース設計規約は [docs/database.md](../docs/database.md)、テスト方針は [docs/backend-test.md](../docs/backend-test.md) を参照してください。
 
-## ディレクトリ構成
-
-```
-backend/
-├── main.py                     FastAPI アプリケーションのエントリーポイント
-├── dependencies.py             コンポジションルート（具象クラスを注入する唯一の場所）
-│
-├── user/                       機能ディレクトリ（最小の実装サンプル）
-│   ├── router.py
-│   ├── service.py
-│   ├── _pure.py
-│   ├── protocol.py             ★ 抽象インターフェースはここだけに定義
-│   ├── repository.py
-│   ├── types.py
-│   └── dto.py
-│
-├── invoice/                    機能ディレクトリ（DB・S3・非同期ジョブを利用するサンプル）
-│   ├── router.py service.py _pure.py protocol.py repository.py types.py dto.py
-│   └── gateway.py              この機能のみで使用する外部連携処理（PDF 生成など）
-│
-├── review/                     機能ディレクトリ（LLM を利用するサンプル）
-│   ├── router.py service.py _pure.py protocol.py repository.py types.py dto.py
-│   └── prompts.py              プロンプト定義（文言のみ）
-│
-├── common/
-│   ├── db/
-│   │   ├── entities/           全テーブル定義（マイグレーションの都合上ここだけ横断管理）
-│   │   └── session.py
-│   ├── gateway/
-│   │   ├── protocol.py         ★ 共通の外部連携インターフェース（Storage / LLM / JobQueue）
-│   │   ├── storage_s3.py
-│   │   ├── llm_claude.py
-│   │   └── job_queue_celery.py
-│   ├── errors.py               ドメイン例外定義
-│   └── config.py               環境変数・設定
-│
-├── worker/
-│   ├── app.py                  Celery アプリケーション
-│   └── tasks.py
-│
-├── alembic/                    マイグレーション設定および履歴
-└── tests/                      機能ディレクトリに対応するテストコード
-    ├── fakes.py                テスト用の Fake 実装（FakeStorage, FakeLLM, InMemory*Repository）
-    ├── conftest.py
-    └── user/ invoice/ review/
-```
-
-※ ★ 印が付いているファイルのみが抽象インターフェース（Protocol）を定義しており、それ以外のファイルはすべて具象実装です。
-
-## 遵守すべき3つの依存ルール
-
-1. **`_pure.py` が import してよいのは `types.py`、`prompts.py`、`common/errors.py` のみです。**
-2. **`service.py` は具象実装ファイルを import せず、`protocol.py` のインターフェースのみを参照します。**
-3. **他機能の `protocol.py` を直接呼び出さず、必ず対象機能の `service.py` の関数を経由して呼び出します。**
-
-これにより、すべての依存関係が抽象である `protocol.py` に向かって一方向に流れます。具象実装クラスが他から直接参照されることはなく、`dependencies.py`（コンポジションルート）のみが具象クラスを参照して依存性を注入します。
-
 ## 提供 API 一覧
 
 | メソッド | パス | 説明 |
@@ -79,19 +22,6 @@ backend/
 | GET | `/reviews/{uid}` | 特定レビューの詳細取得 |
 
 ※ `user` と `invoice` は初期実装例として連番の `id` を返却していますが、新規に作成する機能では `review` のように UUID（`uid`）を使用することを推奨します。
-
-## 開発コマンド
-
-```bash
-uv run fastapi dev                    # 開発サーバー起動
-uv run celery -A worker.app worker    # 非同期ワーカー起動
-uv run pytest -v                      # テスト実行
-uv run ruff check . && uv run ruff format --check . && uv run mypy .  # Lint チェック
-uv run alembic upgrade head           # マイグレーション実行
-uv run alembic revision --autogenerate -m "xxx"  # マイグレーションファイル生成
-```
-
-リポジトリのルートディレクトリからも、`mise run dev`、`mise run test`、`mise run lint`、`mise run migrate` などのコマンドで同様に実行可能です。
 
 ## 環境変数
 
