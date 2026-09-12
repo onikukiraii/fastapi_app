@@ -8,19 +8,21 @@
 
 ## 規約（MUST）
 
-コードを書く前に、触る場所に対応するドキュメントを読むこと。
+規約の実体は `docs/` にあります。ここは読み込みの目次で、以下の3本は常に適用されます。
 
-| 触る場所 | 読むもの |
-|---------|---------|
-| `backend/` または `frontend/` に新しいファイルを足すとき | [docs/architecture.md](docs/architecture.md) |
-| `backend/**/*.py` | [docs/backend.md](docs/backend.md) |
-| `backend/common/db/entities/`, `backend/alembic/`, `repository.py` | [docs/database.md](docs/database.md) |
-| `backend/tests/` | [docs/backend-test.md](docs/backend-test.md) |
-| `frontend/src/` | [docs/frontend.md](docs/frontend.md) |
-| `frontend/src/**/__tests__/` | [docs/frontend-test.md](docs/frontend-test.md) |
+@docs/architecture.md
+@docs/backend.md
+@docs/frontend.md
 
-新しい機能を作るときは [docs/new-api.md](docs/new-api.md)、テーブルを作るときは
-[docs/new-model.md](docs/new-model.md) の手順に従ってください。
+以下は該当する作業をするときに読んでください。
+
+| 作業 | 読むもの |
+|------|---------|
+| テーブル定義・クエリ・マイグレーションを触る | `docs/database.md` |
+| `backend/tests/` にテストを書く | `docs/backend-test.md` |
+| `frontend/src/**/__tests__/` にテストを書く | `docs/frontend-test.md` |
+| 新しい機能を作る | `docs/new-api.md` |
+| 新しいテーブルを作る | `docs/new-model.md` |
 
 ## 開発コマンド
 
