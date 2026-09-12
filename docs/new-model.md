@@ -28,7 +28,7 @@ class ProductRow(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=lambda: datetime.now(UTC))
 ```
 
-クラス名には末尾に `Row` を付けた `XxxRow` という命名規則を採用します。これにより、ドメイン型（`<機能>/types.py` で定義する `Xxx`）とクラス名で明確に区別できるようにします。
+クラス名には末尾に `Row` を付けた `XxxRow` という命名規則を採用します。これにより、ドメイン型（`features/<機能>/types.py` で定義する `Xxx`）とクラス名で明確に区別できるようにします。
 
 外部公開用の `uid` カラムは、内部的な主キーである `id` の直後に定義します。API レスポンスやフロントエンドにはこの `uid` を返却し、内部の連番 `id` は外部に公開しないようにします。
 

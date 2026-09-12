@@ -210,4 +210,8 @@ __marimo__/
 .DS_Store
 
 # Claude Code - プロジェクト共有設定を許可
-!.claude/settings.json
+# グローバルの gitignore が .claude/ ごと除外するため、ディレクトリを再包含してから中身を絞る
+!/.claude/
+/.claude/*
+!/.claude/settings.json
+!/.claude/rules/

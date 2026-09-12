@@ -1,3 +1,8 @@
+---
+paths:
+  - "frontend/src/**/*.{ts,tsx,css}"
+---
+
 # フロントエンド
 
 React 19 + TypeScript 5.9 + Vite 7 + Tailwind CSS v4 + shadcn/ui。

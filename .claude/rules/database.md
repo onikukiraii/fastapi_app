@@ -1,8 +1,15 @@
+---
+paths:
+  - "backend/common/db/**/*.py"
+  - "backend/alembic/**/*.py"
+  - "backend/features/**/repository.py"
+---
+
 # データベース
 
 SQLAlchemy 2.0 スタイル + Alembic / MySQL。テスト環境は SQLite のインメモリ DB で動作する。
 
-新規テーブルを作成する手順は [new-model.md](./new-model.md) を参照。本ドキュメントでは、データベース設計および実装に関する設計指針・規約を定める。
+新規テーブルを作成する手順は [new-model.md](../../docs/new-model.md) を参照。本ドキュメントでは、データベース設計および実装に関する設計指針・規約を定める。
 
 ## テーブル定義の置き場
 

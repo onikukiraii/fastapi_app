@@ -172,29 +172,37 @@ mise tasks  # 利用可能なタスク一覧を表示
 
 ### 設計規約
 
+規約は `.claude/rules/` にあります。各ファイルの冒頭で `paths` に適用対象を宣言しているため、Claude Code はマッチするファイルを読み込んだときにだけ、その規約をコンテキストに含めます。例えば、フロントエンドの作業中にはバックエンドやデータベースの規約がコンテキストに含まれません。`paths` が効くのは `.claude/rules/*.md` だけで、`CLAUDE.md` とそこから `@` で読み込むファイルは毎セッション全文が展開されます。
+
+| ドキュメント | 内容 | 読み込み条件 |
+|-------------|------|------------|
+| [.claude/rules/architecture.md](.claude/rules/architecture.md) | アーキテクチャ全体像、ディレクトリ配置、依存関係の方向性 | 常時 |
+| [.claude/rules/backend.md](.claude/rules/backend.md) | Python と FastAPI の実装規約・コーディング規約 | `backend/**/*.py` |
+| [.claude/rules/database.md](.claude/rules/database.md) | テーブル定義、クエリ作成方針、トランザクション、マイグレーション | `common/db/`、`alembic/`、`repository.py` |
+| [.claude/rules/backend-test.md](.claude/rules/backend-test.md) | pytest によるテスト方針とケース設計 | `backend/tests/**/*.py` |
+| [.claude/rules/frontend.md](.claude/rules/frontend.md) | React と Tailwind CSS の実装規約・コーディング規約 | `frontend/src/**` |
+| [.claude/rules/frontend-test.md](.claude/rules/frontend-test.md) | Vitest と Testing Library によるテスト方針と要素取得 | `__tests__/`、`src/test/` |
+
+新規機能やテーブルの作成手順は `docs/` にあります。こちらは規約ではなく、最初から最後まで通して読むための手順書です。
+
 | ドキュメント | 内容 |
 |-------------|------|
-| [docs/architecture.md](docs/architecture.md) | アーキテクチャ全体像、ディレクトリ配置、依存関係の方向性 |
-| [docs/backend.md](docs/backend.md) | Python と FastAPI の実装規約・コーディング規約 |
-| [docs/database.md](docs/database.md) | テーブル定義、クエリ作成方針、トランザクション、マイグレーション |
-| [docs/backend-test.md](docs/backend-test.md) | pytest によるテスト方針とケース設計 |
-| [docs/frontend.md](docs/frontend.md) | React と Tailwind CSS の実装規約・コーディング規約 |
-| [docs/frontend-test.md](docs/frontend-test.md) | Vitest と Testing Library によるテスト方針と要素取得 |
 | [docs/new-api.md](docs/new-api.md) | 新規機能（エンドポイント）を追加する手順 |
 | [docs/new-model.md](docs/new-model.md) | 新規テーブル（entity）を追加する手順 |
 
 ### ディレクトリ構成
 
-バックエンドは機能（ドメイン）単位でディレクトリを分割しています。1つの機能に関するコードを1つのディレクトリに集約し、抽象インターフェースは各機能の `protocol.py` のみで定義します。配置と依存の向きの詳細は [docs/architecture.md](docs/architecture.md) を参照してください。
+バックエンドは機能（ドメイン）単位でディレクトリを分割しています。1つの機能に関するコードを `backend/features/<機能>/` に集約し、抽象インターフェースは各機能の `protocol.py` のみで定義します。配置と依存の向きの詳細は [.claude/rules/architecture.md](.claude/rules/architecture.md) を参照してください。
 
 ```
 .
 ├── backend/
 │   ├── main.py         # アプリケーションのエントリーポイント
 │   ├── dependencies.py # コンポジションルート（具象クラスを注入する唯一の場所）
-│   ├── user/           # 機能実装の最小サンプル
-│   ├── invoice/        # DB・S3・非同期ジョブを利用するサンプル
-│   ├── review/         # LLM を利用するサンプル
+│   ├── features/       # 機能ディレクトリの置き場（1機能 = 1ディレクトリ）
+│   │   ├── user/       # 機能実装の最小サンプル
+│   │   ├── invoice/    # DB・S3・非同期ジョブを利用するサンプル
+│   │   └── review/     # LLM を利用するサンプル
 │   ├── common/         # 共通処理（entities / gateway / errors / config）
 │   ├── worker/         # Celery アプリケーションと非同期タスク
 │   ├── alembic/        # データベースマイグレーション
@@ -211,13 +219,18 @@ mise tasks  # 利用可能なタスク一覧を表示
 │   │   ├── pages/      # ページコンポーネント
 │   │   └── test/       # テスト共通設定
 │   └── package.json
-├── docs/               # 設計規約と作業手順
+├── .claude/rules/      # 設計規約。paths で適用対象を宣言
+├── docs/               # 新規機能やテーブルの作成手順
 ├── compose.yaml
 ├── mise.toml           # ツールおよびタスク定義
 └── .env.template
 ```
 
 バックエンドの API 一覧・環境変数・不要な機能の削除手順は [backend/README.md](backend/README.md) にあります。
+
+### なぜ機能ごとに各レイヤーのファイルを持つのか
+
+`routers/`、`services/`、`repositories/` のようにレイヤーで横割りにすると、1つの機能を変更するだけで複数のディレクトリを行き来することになり、無関係な機能のファイルまで視界に入ります。`features/<機能>/` に `types.py` から `router.py` までが並んでいれば、型定義からビジネスロジックまでを1つのディレクトリを開くだけで読めます。コードを探索する AI では、その差がそのままトークン数に出ます。
 
 ## ライセンス (License)
 

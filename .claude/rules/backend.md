@@ -1,3 +1,8 @@
+---
+paths:
+  - "backend/**/*.py"
+---
+
 # バックエンド
 
 FastAPI + SQLAlchemy + Alembic / Python 3.14 / パッケージ管理は uv。

@@ -1,3 +1,9 @@
+---
+paths:
+  - "frontend/src/**/__tests__/**/*.{ts,tsx}"
+  - "frontend/src/test/**/*.{ts,tsx}"
+---
+
 # フロントエンドのテスト
 
 Vitest + Testing Library / `mise run test:front` で実行する。実装側の規約は [frontend.md](./frontend.md) を参照。

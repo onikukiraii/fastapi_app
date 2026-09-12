@@ -2,9 +2,9 @@
 
 FastAPI + SQLAlchemy + Alembic / Python 3.14 / パッケージ管理: uv
 
-機能（ドメイン）単位でディレクトリを分割し、レイヤー（層）ごとの横断的なディレクトリ分割は行いません。1つの機能に関するコードを1つのディレクトリ内に集約して管理します。
+機能（ドメイン）単位でディレクトリを分割し、レイヤー（層）ごとの横断的なディレクトリ分割は行いません。1つの機能に関するコードを `features/<機能>/` の1ディレクトリ内に集約して管理します。`features/` 直下には機能ディレクトリのみを配置します。
 
-新規機能の追加手順は [docs/new-api.md](../docs/new-api.md)、テーブルの追加手順は [docs/new-model.md](../docs/new-model.md) を参照してください。また、アーキテクチャ設計規約は [docs/architecture.md](../docs/architecture.md)、バックエンド実装規約は [docs/backend.md](../docs/backend.md)、データベース設計規約は [docs/database.md](../docs/database.md)、テスト方針は [docs/backend-test.md](../docs/backend-test.md) を参照してください。
+新規機能の追加手順は [docs/new-api.md](../docs/new-api.md)、テーブルの追加手順は [docs/new-model.md](../docs/new-model.md) を参照してください。また、アーキテクチャ設計規約は [.claude/rules/architecture.md](../.claude/rules/architecture.md)、バックエンド実装規約は [.claude/rules/backend.md](../.claude/rules/backend.md)、データベース設計規約は [.claude/rules/database.md](../.claude/rules/database.md)、テスト方針は [.claude/rules/backend-test.md](../.claude/rules/backend-test.md) を参照してください。
 
 ## 提供 API 一覧
 
@@ -43,8 +43,8 @@ FastAPI + SQLAlchemy + Alembic / Python 3.14 / パッケージ管理: uv
 
 | 削除する機能 | あわせて削除するもの |
 |-------------|---------------------|
-| `invoice/` | `common/db/entities/invoice.py` および `__init__.py` 内の該当行、`tests/invoice/`、`dependencies.py` 内の `get_invoice_repository` と `get_pdf_renderer`、`main.py` のルーター読み込み、`worker/tasks.py` 内のタスク、`pyproject.toml` の `reportlab` 依存関係 |
-| `review/` | `common/db/entities/review.py` および `__init__.py` 内の該当行、`tests/review/`、`dependencies.py` 内の `get_review_repository` と `get_llm`、`common/gateway/llm_claude.py`、`common/gateway/protocol.py` の `LLM` 定義、`pyproject.toml` の `anthropic` 依存関係 |
+| `features/invoice/` | `common/db/entities/invoice.py` および `__init__.py` 内の該当行、`tests/invoice/`、`dependencies.py` 内の `get_invoice_repository` と `get_pdf_renderer`、`main.py` のルーター読み込み、`worker/tasks.py` 内のタスク、`pyproject.toml` の `reportlab` 依存関係 |
+| `features/review/` | `common/db/entities/review.py` および `__init__.py` 内の該当行、`tests/review/`、`dependencies.py` 内の `get_review_repository` と `get_llm`、`common/gateway/llm_claude.py`、`common/gateway/protocol.py` の `LLM` 定義、`pyproject.toml` の `anthropic` 依存関係 |
 | `worker/` | `common/gateway/job_queue_celery.py`、`common/gateway/protocol.py` の `JobQueue` 定義、`dependencies.py` の `get_job_queue`、`compose.yaml` の `worker` および `redis` サービス、`pyproject.toml` の `celery` 依存関係 |
 | S3 を使用しない場合 | `common/gateway/storage_s3.py`、`common/gateway/protocol.py` の `Storage` 定義、`dependencies.py` の `get_storage`、`compose.yaml` の `minio` および `minio-init` サービス、`pyproject.toml` の `boto3` 依存関係 |
 

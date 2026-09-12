@@ -1,3 +1,8 @@
+---
+paths:
+  - "backend/tests/**/*.py"
+---
+
 # バックエンドのテスト
 
 テストの実行は pytest（`mise run test`）を使用する。実装コード側の規約は [backend.md](./backend.md) を参照。

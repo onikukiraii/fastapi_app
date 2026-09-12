@@ -1,7 +1,7 @@
 # アーキテクチャ
 
 どこに何を配置し、依存関係をどちらの向きに流すかを定義する。個別のコードの書き方は
-[backend.md](./backend.md) / [frontend.md](./frontend.md) / [database.md](./database.md) を、新規機能やテーブルの作成手順は [new-api.md](./new-api.md) や [new-model.md](./new-model.md) を参照。
+[backend.md](./backend.md) / [frontend.md](./frontend.md) / [database.md](./database.md) を、新規機能やテーブルの作成手順は [new-api.md](../../docs/new-api.md) や [new-model.md](../../docs/new-model.md) を参照。
 
 ## 全体構成
 
@@ -9,7 +9,10 @@
 backend/                     FastAPI + SQLAlchemy + Alembic / Python 3.14 / uv
 ├── main.py                  アプリのエントリーポイントとルーター登録
 ├── dependencies.py          コンポジションルート。具象クラスを注入する唯一の場所
-├── user/ invoice/ review/   機能ディレクトリ
+├── features/                機能ディレクトリの置き場
+│   ├── user/                1機能 = 1ディレクトリ
+│   ├── invoice/
+│   └── review/
 ├── common/                  機能ディレクトリから参照される共通モジュール
 │   ├── db/entities/         全テーブル定義
 │   ├── db/session.py        エンジンと SessionLocal
@@ -35,7 +38,7 @@ frontend/src/                React 19 + TypeScript + Vite + Tailwind CSS v4
 
 ## バックエンドは機能ごとに分ける
 
-レイヤーごとの横断ディレクトリ（`routers/`、`services/`、`repositories/` など）は作らず、1つの機能に関するコードを1つのディレクトリに集約する。機能を削除する際には、ディレクトリごと削除できる状態を保つ。
+レイヤーごとの横断ディレクトリ（`routers/`、`services/`、`repositories/` など）は作らず、1つの機能に関するコードを `backend/features/<機能>/` の1ディレクトリに集約する。`features/` 直下には機能ディレクトリ以外を置かない。機能を削除する際には、ディレクトリごと削除できる状態を保つ。
 
 ### 機能ディレクトリのファイル構成
 
@@ -106,7 +109,7 @@ Celery ワーカーからも `dependencies.py` の関数を呼び出す。FastAP
 
 依存関係の向きは `pages/` → `hooks/` → `lib/` の一方向とする。`lib/` が hooks を import してしまうと、`lib/` の関数を React 以外の文脈から単独で利用できなくなる。
 
-画面数が増加して `pages/` 直下の見通しが悪くなった段階で、`features/<機能>/` ディレクトリを新設し、画面およびその画面専用の hooks や components を集約する。画面が数枚程度の初期段階では過度なディレクトリ分割を行わない。
+画面数が増加して `pages/` 直下の見通しが悪くなった段階で、`src/features/<機能>/` ディレクトリを新設し、画面およびその画面専用の hooks や components を集約する。画面が数枚程度の初期段階では過度なディレクトリ分割を行わない。
 
 ## アーキテクチャの整合性チェック
 

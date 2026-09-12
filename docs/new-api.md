@@ -4,10 +4,10 @@
 
 前提条件: [新しいテーブルを作成する手順](./new-model.md) に沿って、事前に entity が作成されている必要があります。
 
-機能に関するコードは1つのディレクトリに集約します。`backend/product/` ディレクトリを作成し、依存関係の独立性が高い（外部への依存が少ない）ファイルから順に、以下の7つのファイルを作成していきます。
+機能に関するコードは1つのディレクトリに集約します。`backend/features/product/` ディレクトリを作成し、依存関係の独立性が高い（外部への依存が少ない）ファイルから順に、以下の7つのファイルを作成していきます。
 
 ```
-backend/product/
+backend/features/product/
 ├── types.py        ドメインモデルの型定義
 ├── protocol.py     この機能が外部に要求するインターフェース（プロトコル）
 ├── _pure.py        純粋関数（引数のみから結果を算出する関数）
@@ -19,7 +19,7 @@ backend/product/
 
 ## 1. ドメインの型定義
 
-`product/types.py`:
+`features/product/types.py`:
 
 ```python
 from dataclasses import dataclass
@@ -45,12 +45,12 @@ SQLAlchemy の entity（`common/db/entities/product.py`）とは別に定義し�
 
 ## 2. インターフェースの定義 (Protocol)
 
-`product/protocol.py`:
+`features/product/protocol.py`:
 
 ```python
 from typing import Protocol
 
-from product.types import Product
+from features.product.types import Product
 
 
 class ProductRepository(Protocol):
@@ -67,11 +67,11 @@ Protocol（インターフェース）を定義する最大のメリットは、
 
 ## 3. 計算ロジック (_pure.py)
 
-`product/_pure.py`:
+`features/product/_pure.py`:
 
 ```python
 from common.errors import BusinessRuleViolation
-from product.types import ProductStatus
+from features.product.types import ProductStatus
 
 MIN_PRICE = 100
 
@@ -89,7 +89,7 @@ def validate_publishable(status: ProductStatus, price: int) -> None:
 
 ## 4. データベースの具象実装 (repository.py)
 
-`product/repository.py`:
+`features/product/repository.py`:
 
 ```python
 from sqlalchemy import select
@@ -97,7 +97,7 @@ from sqlalchemy.orm import Session
 
 from common.db.entities import ProductRow
 from common.errors import NotFound
-from product.types import Product, ProductStatus
+from features.product.types import Product, ProductStatus
 
 
 class DbProductRepository:
@@ -123,14 +123,14 @@ def _to_domain(row: ProductRow) -> Product:
 
 ## 5. ユースケース処理手順 (service.py)
 
-`product/service.py`:
+`features/product/service.py`:
 
 ```python
 from uuid import uuid4
 
-from product._pure import validate_publishable
-from product.protocol import ProductRepository
-from product.types import Product
+from features.product._pure import validate_publishable
+from features.product.protocol import ProductRepository
+from features.product.types import Product
 
 
 def create_product(repo: ProductRepository, *, name: str, price: int) -> Product:
@@ -147,12 +147,12 @@ service では「データを取得する → 計算・検証する → デー�
 
 ## 6. リクエストとレスポンス (dto.py)
 
-`product/dto.py`:
+`features/product/dto.py`:
 
 ```python
 from pydantic import BaseModel, Field
 
-from product.types import ProductStatus
+from features.product.types import ProductStatus
 
 
 class ProductCreateParams(BaseModel):
@@ -175,7 +175,7 @@ class ProductResponse(BaseModel):
 
 ## 7. HTTP ルーター (router.py)
 
-`product/router.py`:
+`features/product/router.py`:
 
 ```python
 from typing import Annotated
@@ -184,10 +184,10 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from common.errors import BusinessRuleViolation, NotFound
 from dependencies import get_product_repository
-from product import service
-from product.dto import ProductCreateParams, ProductResponse
-from product.protocol import ProductRepository
-from product.types import Product
+from features.product import service
+from features.product.dto import ProductCreateParams, ProductResponse
+from features.product.protocol import ProductRepository
+from features.product.types import Product
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -226,8 +226,8 @@ def _to_response(product: Product) -> ProductResponse:
 `dependencies.py`:
 
 ```python
-from product.protocol import ProductRepository
-from product.repository import DbProductRepository
+from features.product.protocol import ProductRepository
+from features.product.repository import DbProductRepository
 
 
 def get_product_repository(session: SessionDep) -> ProductRepository:
@@ -241,7 +241,7 @@ def get_product_repository(session: SessionDep) -> ProductRepository:
 `main.py` に作成したルーターを登録します:
 
 ```python
-from product.router import router as product_router
+from features.product.router import router as product_router
 
 app.include_router(product_router)
 ```
@@ -280,7 +280,7 @@ uv run mypy .
 
 ### 外部サービスを呼び出す場合
 
-複数の機能から共通して使用する場合は `common/gateway/` に配置し、その機能だけで利用する場合は `<機能>/gateway.py` に配置します。
+複数の機能から共通して使用する場合は `common/gateway/` に配置し、その機能だけで利用する場合は `features/<機能>/gateway.py` に配置します。
 
 service には具象クラスではなく、Protocol のみを渡すようにします。
 
@@ -301,9 +301,9 @@ def publish_product(repo: ProductRepository, storage: Storage, *, uid: str) -> P
 |------|--------|
 | インターフェース定義 (Protocol) | `common/gateway/protocol.py` |
 | クライアント・モデルID・リトライ制御 | `common/gateway/llm_claude.py` |
-| プロンプトのテンプレート文言 | `<機能>/prompts.py` |
-| プロンプト文字列の組み立て | `<機能>/_pure.py` |
-| 出力データの型定義 | `<機能>/types.py` |
+| プロンプトのテンプレート文言 | `features/<機能>/prompts.py` |
+| プロンプト文字列の組み立て | `features/<機能>/_pure.py` |
+| 出力データの型定義 | `features/<機能>/types.py` |
 
 実装例として `review` 機能を参照してください。ログ追跡用の `trace_id` には、検索キーとして利用可能な UUID（`uid`）を指定します。内部的な連番 `id` を使用してしまうと、外部クライアントからの問い合わせや障害調査時にログから該当のトレースを特定できなくなるためです。
 
