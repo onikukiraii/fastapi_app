@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from common.errors import BusinessRuleViolation, Conflict
 from dependencies import get_user_repository
-from user import service
-from user.dto import UserCreateParams, UserResponse
-from user.protocol import UserRepository
+from features.user import service
+from features.user.dto import UserCreateParams, UserResponse
+from features.user.protocol import UserRepository
 
 router = APIRouter(prefix="/users", tags=["users"])
 

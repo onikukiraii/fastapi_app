@@ -1,5 +1,5 @@
-from review.prompts import REVIEW_TEMPLATE
-from review.types import FindingOutput, ReviewFinding
+from features.review.prompts import REVIEW_TEMPLATE
+from features.review.types import FindingOutput, ReviewFinding
 
 
 def build_review_prompt(contract_text: str, rules: list[str]) -> str:

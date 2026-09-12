@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from common.db.entities import UserRow
 from common.errors import Conflict
-from user.types import User
+from features.user.types import User
 
 
 class DbUserRepository:

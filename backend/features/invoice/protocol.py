@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Protocol
 
-from invoice.types import Invoice, InvoiceAmount, InvoiceLine
+from features.invoice.types import Invoice, InvoiceAmount, InvoiceLine
 
 
 class InvoiceRepository(Protocol):

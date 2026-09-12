@@ -4,8 +4,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen.canvas import Canvas
 
 from common.errors import RenderError
-from invoice._pure import build_invoice_lines
-from invoice.types import Invoice, InvoiceAmount
+from features.invoice._pure import build_invoice_lines
+from features.invoice.types import Invoice, InvoiceAmount
 
 LINE_HEIGHT = 18
 TOP_MARGIN = 60

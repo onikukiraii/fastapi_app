@@ -1,5 +1,5 @@
-from review._pure import build_review_prompt, to_findings
-from review.types import FindingOutput, Severity
+from features.review._pure import build_review_prompt, to_findings
+from features.review.types import FindingOutput, Severity
 
 
 class TestBuildReviewPrompt:

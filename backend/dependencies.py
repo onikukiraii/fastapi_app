@@ -12,13 +12,13 @@ from common.gateway.job_queue_celery import CeleryJobQueue
 from common.gateway.llm_claude import ClaudeLLM
 from common.gateway.protocol import LLM, JobQueue, Storage
 from common.gateway.storage_s3 import S3Storage
-from invoice.gateway import ReportLabPdfRenderer
-from invoice.protocol import InvoiceRepository, PdfRenderer
-from invoice.repository import DbInvoiceRepository
-from review.protocol import ReviewRepository
-from review.repository import DbReviewRepository
-from user.protocol import UserRepository
-from user.repository import DbUserRepository
+from features.invoice.gateway import ReportLabPdfRenderer
+from features.invoice.protocol import InvoiceRepository, PdfRenderer
+from features.invoice.repository import DbInvoiceRepository
+from features.review.protocol import ReviewRepository
+from features.review.repository import DbReviewRepository
+from features.user.protocol import UserRepository
+from features.user.repository import DbUserRepository
 from worker.app import celery_app
 
 

@@ -1,8 +1,8 @@
 import pytest
 
 from common.errors import BusinessRuleViolation, Conflict
+from features.user.service import create_user, list_users
 from tests.fakes import InMemoryUserRepository
-from user.service import create_user, list_users
 
 
 class TestListUsers:

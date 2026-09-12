@@ -1,7 +1,7 @@
 import pytest
 
 from common.errors import BusinessRuleViolation
-from user._pure import normalize_email, validate_name
+from features.user._pure import normalize_email, validate_name
 
 
 class TestNormalizeEmail:

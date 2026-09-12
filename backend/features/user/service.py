@@ -1,6 +1,6 @@
-from user._pure import normalize_email, validate_name
-from user.protocol import UserRepository
-from user.types import User
+from features.user._pure import normalize_email, validate_name
+from features.user.protocol import UserRepository
+from features.user.types import User
 
 
 def list_users(repo: UserRepository) -> list[User]:

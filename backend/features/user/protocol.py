@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from user.types import User
+from features.user.types import User
 
 
 class UserRepository(Protocol):

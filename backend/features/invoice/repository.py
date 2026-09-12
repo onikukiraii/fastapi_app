@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from common.db.entities import InvoiceLineRow, InvoiceRow
 from common.errors import NotFound
-from invoice.types import Invoice, InvoiceLine, InvoiceStatus
+from features.invoice.types import Invoice, InvoiceLine, InvoiceStatus
 
 
 class DbInvoiceRepository:

@@ -1,8 +1,8 @@
 import pytest
 
 from common.errors import BusinessRuleViolation
-from invoice._pure import build_invoice_lines, calculate_amount, invoice_object_key, validate_issuable
-from invoice.types import Invoice, InvoiceAmount, InvoiceLine, InvoiceStatus
+from features.invoice._pure import build_invoice_lines, calculate_amount, invoice_object_key, validate_issuable
+from features.invoice.types import Invoice, InvoiceAmount, InvoiceLine, InvoiceStatus
 
 
 def _line(unit_price: int, quantity: int = 1) -> InvoiceLine:

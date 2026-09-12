@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from invoice.types import InvoiceStatus
+from features.invoice.types import InvoiceStatus
 
 
 class InvoiceLineParams(BaseModel):

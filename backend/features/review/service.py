@@ -2,10 +2,10 @@ from uuid import uuid4
 
 from common.errors import LLMError
 from common.gateway.protocol import LLM
-from review._pure import build_review_prompt, to_findings
-from review.prompts import REVIEW_SYSTEM
-from review.protocol import ReviewRepository
-from review.types import Review, ReviewOutput
+from features.review._pure import build_review_prompt, to_findings
+from features.review.prompts import REVIEW_SYSTEM
+from features.review.protocol import ReviewRepository
+from features.review.types import Review, ReviewOutput
 
 
 def list_reviews(repo: ReviewRepository) -> list[Review]:

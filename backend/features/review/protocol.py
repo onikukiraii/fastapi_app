@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from review.types import Review, ReviewFinding
+from features.review.types import Review, ReviewFinding
 
 
 class ReviewRepository(Protocol):

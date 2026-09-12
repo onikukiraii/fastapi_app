@@ -3,9 +3,9 @@ from datetime import UTC, datetime
 from pydantic import BaseModel
 
 from common.errors import Conflict, NotFound
-from invoice.types import Invoice, InvoiceAmount, InvoiceLine, InvoiceStatus
-from review.types import Review, ReviewFinding, ReviewStatus
-from user.types import User
+from features.invoice.types import Invoice, InvoiceAmount, InvoiceLine, InvoiceStatus
+from features.review.types import Review, ReviewFinding, ReviewStatus
+from features.user.types import User
 
 
 class FakeStorage:

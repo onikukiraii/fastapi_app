@@ -1,5 +1,5 @@
 from common.errors import BusinessRuleViolation
-from invoice.types import Invoice, InvoiceAmount, InvoiceLine, InvoiceStatus
+from features.invoice.types import Invoice, InvoiceAmount, InvoiceLine, InvoiceStatus
 
 TAX_RATE = 0.1
 DISCOUNT_THRESHOLD = 100_000

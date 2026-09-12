@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from common.errors import LLMError, NotFound
 from common.gateway.protocol import LLM
 from dependencies import get_llm, get_review_repository
-from review import service
-from review.dto import FindingResponse, ReviewCreateParams, ReviewResponse
-from review.protocol import ReviewRepository
-from review.types import Review
+from features.review import service
+from features.review.dto import FindingResponse, ReviewCreateParams, ReviewResponse
+from features.review.protocol import ReviewRepository
+from features.review.types import Review
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 

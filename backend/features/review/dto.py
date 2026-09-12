@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from review.types import ReviewStatus, Severity
+from features.review.types import ReviewStatus, Severity
 
 
 class ReviewCreateParams(BaseModel):

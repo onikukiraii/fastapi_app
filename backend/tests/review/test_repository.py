@@ -2,8 +2,8 @@ import pytest
 from sqlalchemy.orm import Session
 
 from common.errors import NotFound
-from review.repository import DbReviewRepository
-from review.types import ReviewFinding, ReviewStatus, Severity
+from features.review.repository import DbReviewRepository
+from features.review.types import ReviewFinding, ReviewStatus, Severity
 
 UID = "11111111-1111-1111-1111-111111111111"
 

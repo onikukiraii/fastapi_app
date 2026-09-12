@@ -5,8 +5,8 @@ from fastapi.testclient import TestClient
 
 from common.errors import LLMError
 from dependencies import get_llm
+from features.review.types import FindingOutput, ReviewOutput, Severity
 from main import app
-from review.types import FindingOutput, ReviewOutput, Severity
 from tests.fakes import FakeLLM
 
 CREATE_BODY = {"contract_text": "第1条 本契約は…", "rules": ["解除条項の有無"]}

@@ -5,16 +5,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from common.errors import BusinessRuleViolation, NotFound, RenderError, StorageError
 from common.gateway.protocol import JobQueue, Storage
 from dependencies import get_invoice_repository, get_job_queue, get_pdf_renderer, get_storage
-from invoice import service
-from invoice.dto import (
+from features.invoice import service
+from features.invoice.dto import (
     EnqueuedResponse,
     InvoiceCreateParams,
     InvoiceLineResponse,
     InvoiceResponse,
     PdfUrlResponse,
 )
-from invoice.protocol import InvoiceRepository, PdfRenderer
-from invoice.types import Invoice, InvoiceLine
+from features.invoice.protocol import InvoiceRepository, PdfRenderer
+from features.invoice.types import Invoice, InvoiceLine
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
 

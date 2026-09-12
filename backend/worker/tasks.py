@@ -1,6 +1,6 @@
 from common.db.session import SessionLocal
 from dependencies import get_invoice_repository, get_pdf_renderer, get_storage
-from invoice import service
+from features.invoice import service
 from worker.app import celery_app
 
 

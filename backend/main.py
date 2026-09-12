@@ -5,9 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from common.config import settings
-from invoice.router import router as invoice_router
-from review.router import router as review_router
-from user.router import router as user_router
+from features.invoice.router import router as invoice_router
+from features.review.router import router as review_router
+from features.user.router import router as user_router
 
 logger = logging.getLogger(__name__)
 

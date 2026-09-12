@@ -2,8 +2,8 @@ import pytest
 from pydantic import BaseModel
 
 from common.errors import LLMError, NotFound
-from review.service import get_review, request_review
-from review.types import FindingOutput, ReviewOutput, ReviewStatus, Severity
+from features.review.service import get_review, request_review
+from features.review.types import FindingOutput, ReviewOutput, ReviewStatus, Severity
 from tests.fakes import FakeLLM, InMemoryReviewRepository
 
 OUTPUT = ReviewOutput(

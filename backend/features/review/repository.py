@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from common.db.entities import ReviewFindingRow, ReviewRow
 from common.errors import NotFound
-from review.types import Review, ReviewFinding, ReviewStatus, Severity
+from features.review.types import Review, ReviewFinding, ReviewStatus, Severity
 
 
 class DbReviewRepository:

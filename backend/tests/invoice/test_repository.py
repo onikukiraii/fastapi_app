@@ -4,8 +4,8 @@ import pytest
 from sqlalchemy.orm import Session
 
 from common.errors import NotFound
-from invoice.repository import DbInvoiceRepository
-from invoice.types import InvoiceLine, InvoiceStatus
+from features.invoice.repository import DbInvoiceRepository
+from features.invoice.types import InvoiceLine, InvoiceStatus
 
 
 def _create(repo: DbInvoiceRepository, customer_name: str = "株式会社テスト") -> int:

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from common.db.entities import UserRow
 from common.errors import Conflict
-from user.repository import DbUserRepository
+from features.user.repository import DbUserRepository
 
 
 class TestListAll:
