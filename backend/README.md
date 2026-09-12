@@ -2,9 +2,9 @@
 
 FastAPI + SQLAlchemy + Alembic / Python 3.14 / パッケージ管理: uv
 
-機能（ドメイン）ごとにディレクトリを分割し、レイヤー（層）による横断的なファイル分割は行いません。1つの機能に関するコードは1つのディレクトリ内に集約します。
+機能（ドメイン）単位でディレクトリを分割し、レイヤー（層）ごとの横断的なディレクトリ分割は行いません。1つの機能に関するコードを1つのディレクトリ内に集約して管理します。
 
-新しい機能の追加手順は [docs/new-api.md](../docs/new-api.md)、テーブルの追加手順は [docs/new-model.md](../docs/new-model.md) を参照してください。設計規約は [docs/architecture.md](../docs/architecture.md)、コードの書き方は [docs/backend.md](../docs/backend.md)、テーブルとクエリは [docs/database.md](../docs/database.md)、テストは [docs/backend-test.md](../docs/backend-test.md) にあります。
+新規機能の追加手順は [docs/new-api.md](../docs/new-api.md)、テーブルの追加手順は [docs/new-model.md](../docs/new-model.md) を参照してください。また、アーキテクチャ設計規約は [docs/architecture.md](../docs/architecture.md)、バックエンド実装規約は [docs/backend.md](../docs/backend.md)、データベース設計規約は [docs/database.md](../docs/database.md)、テスト方針は [docs/backend-test.md](../docs/backend-test.md) を参照してください。
 
 ## ディレクトリ構成
 
@@ -53,15 +53,15 @@ backend/
     └── user/ invoice/ review/
 ```
 
-★ が付いているファイルのみが抽象インターフェースであり、それ以外のファイルはすべて具象実装です。
+※ ★ 印が付いているファイルのみが抽象インターフェース（Protocol）を定義しており、それ以外のファイルはすべて具象実装です。
 
-## 遵守すべき3つの設計ルール
+## 遵守すべき3つの依存ルール
 
-1. **`_pure.py` がインポートできるのは `types.py`、`prompts.py`、`common/errors.py` のみです。**
-2. **`service.py` は具象実装ファイルをインポートせず、`protocol.py` のインターフェースのみを参照します。**
-3. **他の機能の `protocol.py` を直接呼び出さず、必ず対象機能の `service.py` に定義された関数を経由して呼び出します。**
+1. **`_pure.py` が import してよいのは `types.py`、`prompts.py`、`common/errors.py` のみです。**
+2. **`service.py` は具象実装ファイルを import せず、`protocol.py` のインターフェースのみを参照します。**
+3. **他機能の `protocol.py` を直接呼び出さず、必ず対象機能の `service.py` の関数を経由して呼び出します。**
 
-これにより、すべての依存の矢印が `protocol.py` に向かって集約されます。具象実装クラスは他から直接参照されず、`dependencies.py` のみが具象クラスを参照して依存性を注入します。
+これにより、すべての依存関係が抽象である `protocol.py` に向かって一方向に流れます。具象実装クラスが他から直接参照されることはなく、`dependencies.py`（コンポジションルート）のみが具象クラスを参照して依存性を注入します。
 
 ## 提供 API 一覧
 
@@ -78,7 +78,7 @@ backend/
 | POST | `/reviews/` | 契約書レビューの実行（LLM を呼び出し） |
 | GET | `/reviews/{uid}` | 特定レビューの詳細取得 |
 
-※ `user` と `invoice` は既存実装として連番の `id` を返しますが、`review` のように新しく作成する機能では UUID（`uid`）を使用することを推奨します。
+※ `user` と `invoice` は初期実装例として連番の `id` を返却していますが、新規に作成する機能では `review` のように UUID（`uid`）を使用することを推奨します。
 
 ## 開発コマンド
 
@@ -91,17 +91,17 @@ uv run alembic upgrade head           # マイグレーション実行
 uv run alembic revision --autogenerate -m "xxx"  # マイグレーションファイル生成
 ```
 
-リポジトリのルートディレクトリからも、`mise run dev`、`mise run test`、`mise run lint`、`mise run migrate` などのコマンドで同様に実行できます。
+リポジトリのルートディレクトリからも、`mise run dev`、`mise run test`、`mise run lint`、`mise run migrate` などのコマンドで同様に実行可能です。
 
 ## 環境変数
 
-`.env.template` をコピーして `.env` を作成します。必須の項目は `DATABASE_URL` のみで、その他の項目にはローカル開発用のデフォルト値が設定されています。
+`.env.template` をコピーして `.env` を作成します。必須の設定項目は `DATABASE_URL` のみで、その他の項目にはローカル開発用のデフォルト値があらかじめ設定されています。
 
 | 変数 | 用途 |
 |------|------|
 | `DATABASE_URL` | MySQL 接続情報 |
 | `S3_BUCKET` `S3_ENDPOINT_URL` `S3_REGION` | オブジェクトストレージ設定（ローカル環境では MinIO を使用） |
-| `AWS_ACCESS_KEY_ID` `AWS_SECRET_ACCESS_KEY` | boto3 が使用する認証情報（本番環境では IAM ロールを利用するため空で問題ありません） |
+| `AWS_ACCESS_KEY_ID` `AWS_SECRET_ACCESS_KEY` | boto3 が使用する AWS 認証情報（本番環境では IAM ロール等を利用するため空で問題ありません） |
 | `ANTHROPIC_API_KEY` | LLM 連携用 API キー（`review` 機能を使用する場合のみ必須） |
 | `LLM_MODEL` `LLM_MAX_TOKENS` | 使用する LLM モデルおよび最大トークン数の設定 |
 | `CELERY_BROKER_URL` | 非同期ジョブのブローカー URL（Redis） |
@@ -109,7 +109,7 @@ uv run alembic revision --autogenerate -m "xxx"  # マイグレーションフ�
 
 ## 不要な機能の削除
 
-このテンプレートはフル機能が含まれた状態になっています。プロジェクトで使用しない機能は、開発初期の段階で削除することをおすすめします（コードを追加する前であれば最小限の手間で削除できます）。
+本テンプレートにはすべてのサンプル機能が含まれています。プロジェクトで使用しない機能は、開発初期の段階で削除することを推奨します（独自コードを追加する前であれば、最小限の手間で安全に削除できます）。
 
 | 削除する機能 | あわせて削除するもの |
 |-------------|---------------------|
@@ -120,4 +120,4 @@ uv run alembic revision --autogenerate -m "xxx"  # マイグレーションフ�
 
 不要な機能を削除した後は、`uv run pytest` と `uv run mypy .` を実行して削除漏れや型エラーがないか確認してください。
 
-`alembic/versions/` ディレクトリは初期状態で空になっています。不要な機能の削除が完了した後に `mise run migrate-gen "initial"` を実行することで、必要な entity のみを含んだ初期マイグレーションファイルを生成できます。先にマイグレーションファイルを生成してしまうと、後で削除する予定のテーブル定義が混ざってしまうため注意してください。
+`alembic/versions/` ディレクトリは初期状態では空になっています。不要な機能の削除が完了した後に `mise run migrate-gen "initial"` を実行することで、必要な entity のみを含んだ初期マイグレーションファイルを生成できます。先にマイグレーションファイルを生成してしまうと、削除予定のテーブル定義がマイグレーション履歴に含まれてしまうため注意してください。

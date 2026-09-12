@@ -211,4 +211,3 @@ __marimo__/
 
 # Claude Code - プロジェクト共有設定を許可
 !.claude/settings.json
-!.claude/rules/
