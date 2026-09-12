@@ -38,6 +38,11 @@ description = "Start backend development server"
 run = "uv run fastapi dev"
 dir = "backend"
 
+[tasks.worker]
+description = "Start Celery worker for async jobs"
+run = "uv run celery -A worker.app worker --loglevel=info"
+dir = "backend"
+
 [tasks."dev:front"]
 description = "Start frontend development server"
 run = "npm run dev"

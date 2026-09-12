@@ -3,29 +3,22 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import IntegrityError
 
-from routers.user import router as user_router
+from common.config import settings
+from invoice.router import router as invoice_router
+from review.router import router as review_router
+from user.router import router as user_router
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.exception_handler(IntegrityError)
-async def integrity_error_handler(request: Request, exc: IntegrityError) -> JSONResponse:
-    logger.warning("IntegrityError: %s %s — %s", request.method, request.url.path, exc)
-    return JSONResponse(
-        status_code=409,
-        content={"detail": "データの整合性制約に違反しました。"},
-    )
 
 
 @app.exception_handler(Exception)
@@ -38,3 +31,5 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
 
 
 app.include_router(user_router)
+app.include_router(invoice_router)
+app.include_router(review_router)

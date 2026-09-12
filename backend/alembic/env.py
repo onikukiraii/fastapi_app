@@ -1,11 +1,11 @@
-import os
 from logging.config import fileConfig
 
 from sqlalchemy import create_engine, pool
 
 from alembic import context
+from common.config import settings
 
-DATABASE_URL = os.environ["DATABASE_URL"]
+DATABASE_URL = settings.database_url
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -18,7 +18,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from entity import Base
+from common.db.entities import Base
 
 target_metadata = Base.metadata
 

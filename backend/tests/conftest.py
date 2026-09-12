@@ -11,9 +11,8 @@ from sqlalchemy import create_engine, event  # noqa: E402
 from sqlalchemy.orm import Session, sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
-from db.session import get_db  # noqa: E402
-from entity.base import Base  # noqa: E402
-from entity.user import User  # noqa: E402
+from common.db.entities import Base, UserRow  # noqa: E402
+from dependencies import get_session  # noqa: E402
 from main import app  # noqa: E402
 
 
@@ -43,25 +42,22 @@ def db_session() -> Generator[Session]:
 
 @pytest.fixture()
 def client(db_session: Session) -> Generator[TestClient]:
-    def _override_get_db() -> Generator[Session]:
+    def _override_get_session() -> Generator[Session]:
         yield db_session
 
-    app.dependency_overrides[get_db] = _override_get_db
+    app.dependency_overrides[get_session] = _override_get_session
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
 
 
 @pytest.fixture()
-def create_user(db_session: Session) -> Callable[..., User]:
-    def _factory(
-        name: str = "テスト太郎",
-        email: str = "test@example.com",
-    ) -> User:
-        user = User(name=name, email=email)
-        db_session.add(user)
+def create_user(db_session: Session) -> Callable[..., UserRow]:
+    def _factory(name: str = "テスト太郎", email: str = "test@example.com") -> UserRow:
+        row = UserRow(name=name, email=email)
+        db_session.add(row)
         db_session.commit()
-        db_session.refresh(user)
-        return user
+        db_session.refresh(row)
+        return row
 
     return _factory
