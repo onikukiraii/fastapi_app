@@ -29,17 +29,11 @@ export function DashboardPage() {
   const [form, setForm] = useState<FormState>(INITIAL_FORM)
   const [submitting, setSubmitting] = useState(false)
 
-  const fetchUsers = useCallback(async () => {
-    try {
-      setLoading(true)
-      const data = await usersApi.list()
-      setUsers(data)
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : '読み込みに失敗しました')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const fetchUsers = useCallback(() =>
+    usersApi.list()
+      .then(setUsers)
+      .catch((e) => toast.error(e instanceof Error ? e.message : '読み込みに失敗しました'))
+      .finally(() => setLoading(false)), [])
 
   useEffect(() => {
     fetchUsers()

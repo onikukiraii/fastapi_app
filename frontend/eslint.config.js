@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'src/components/ui', 'src/api/schema.d.ts', 'src/test']),
+  globalIgnores(['dist', 'src/components/ui', 'src/components/dads', 'src/api/schema.d.ts', 'src/test']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -19,5 +19,18 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          regex: '^@/components/ui/(alert|badge|button|checkbox|dialog|input|label|select|separator|sheet|table)$',
+          message: 'デジタル庁デザインシステムに同じ部品があります。src/components/dads/ の部品を使ってください。',
+        }],
+      }],
+    },
+  },
+  {
+    // デジタル庁デザインシステムの部品へ置き換えるまで、既存の shadcn/ui の import を許可する
+    files: ['src/layouts/AppLayout.tsx', 'src/pages/DashboardPage.tsx'],
+    rules: { 'no-restricted-imports': 'off' },
   },
 ])
