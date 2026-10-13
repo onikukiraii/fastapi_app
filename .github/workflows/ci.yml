@@ -31,6 +31,9 @@ jobs:
       - name: Run mypy
         run: uv run mypy .
 
+      - name: Run tests
+        run: uv run pytest
+
   lint-frontend:
     runs-on: ubuntu-latest
     defaults:
@@ -57,3 +60,6 @@ jobs:
 
       - name: Run tests
         run: npm run test:ci
+
+      - name: Build
+        run: npm run build
