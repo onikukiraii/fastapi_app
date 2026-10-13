@@ -5,7 +5,7 @@ FastAPI と React で構築するフルスタック Web アプリケーション
 ## 技術スタック (Tech Stack)
 
 - **Backend**: FastAPI, SQLAlchemy, Alembic
-- **Frontend**: React 19, TypeScript, Vite 7, Tailwind CSS v4, shadcn/ui
+- **Frontend**: React 19, TypeScript, Vite 8, Tailwind CSS v4, shadcn/ui
 - **Database**: MySQL 8.0, OpenSearch
 - **Storage**: S3 / MinIO
 - **LLM**: Claude (Anthropic SDK)

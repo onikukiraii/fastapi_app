@@ -5,7 +5,7 @@ paths:
 
 # フロントエンド
 
-React 19 + TypeScript 5.9 + Vite 7 + Tailwind CSS v4 + shadcn/ui。
+React 19 + TypeScript 5.9 + Vite 8 + Tailwind CSS v4 + shadcn/ui。
 
 ディレクトリ構成や配置ルールは [architecture.md](./architecture.md)、テスト方針は
 [frontend-test.md](./frontend-test.md) を参照。本ドキュメントでは、フロントエンドコードの実装規約を定める。
