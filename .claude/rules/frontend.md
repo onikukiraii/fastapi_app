@@ -5,7 +5,7 @@ paths:
 
 # フロントエンド
 
-React 19 + TypeScript 5.9 + Vite 8 + Tailwind CSS v4 + shadcn/ui。
+React 19 + TypeScript 5.9 + Vite 8 + Tailwind CSS v4 + デジタル庁デザインシステム + shadcn/ui。
 
 ディレクトリ構成や配置ルールは [architecture.md](./architecture.md)、テスト方針は
 [frontend-test.md](./frontend-test.md) を参照。本ドキュメントでは、フロントエンドコードの実装規約を定める。
@@ -43,14 +43,46 @@ export const usersApi = {
 
 ## UI 部品
 
-- UI コンポーネントは shadcn/ui を最優先で使用し、shadcn/ui に存在しないプリミティブのみ Radix UI を直接利用する。
-- `src/components/ui/` は shadcn/ui の CLI が自動生成するディレクトリである。手動での直接編集は行わず、ESLint の検証対象からも除外している。新しい部品が必要な場合は、以下の CLI コマンドで追加する。
+UI 部品は、指定がない限り[デジタル庁デザインシステム](https://design.digital.go.jp/dads/)の部品を使う。デジタル庁デザインシステムに無い部品に限り shadcn/ui を使い、shadcn/ui にも無いプリミティブは Radix UI を直接使う。
 
-  ```bash
-  cd frontend && npx shadcn add <component-name>
-  ```
+チェックボックスの状態表示などの標準的な振る舞いは、導入済みの UI 部品に委譲し、自作しない。
 
-- チェックボックスの状態表示などの標準的な振る舞いは、導入済みの UI コンポーネントに委譲し、独自に自作（手組み）しない。
+### デジタル庁デザインシステムの部品
+
+部品は npm パッケージではなく、[React 版のコードスニペット](https://github.com/digital-go-jp/design-system-example-components-react)の main からコードを取り込んで使う。置き場所は `src/components/dads/<Name>/`。
+
+```bash
+mise run dads:add <Name>   # 例: mise run dads:add Button
+```
+
+- **記憶から書かない。** props やクラス名は版によって変わる。未取り込みの部品は必ず `dads:add` で main から取得する。
+- **使い方は stories を読む。** 取り込み対象から `*.stories.tsx` は除外している。props の組み合わせと実装上の注意は、GitHub の `src/components/<Name>/<Name>.stories.tsx` にある。
+- **依存する部品も取り込む。** `../Slot` のように別の部品を相対パスで import している場合は、その部品も `dads:add` する。
+- **取り込んだら型エラーを直す。** スニペットは React 18 と Tailwind CSS v3 で書かれている。React 19 では `isValidElement` の `props` が `unknown` になるため、`isValidElement<HTMLAttributes<HTMLElement>>(children)` のように型引数を渡す。
+- **取り込み元のコミット SHA をコミットメッセージに書く。** `dads:add` が最後に表示する。最新版との差分を追うときの起点になる。
+- `src/components/dads/` は ESLint の検証対象から除外している。取り込み直したときの差分を小さく保つため、型エラーの修正以外の手を入れない。
+
+取り込める部品は次のとおり。Accordion, Blockquote, Breadcrumbs, Button, Calendar, Card, Carousel, Checkbox, ChipLabel, DatePicker, Disclosure, Divider, Dl, Drawer, EmergencyBanner, ErrorText, FileUpload, HamburgerMenuButton, Heading, HorizontalMenu, Image, Input, Label, LanguageSelector, Legend, Link, List, MenuList, MenuListBox, ModalDialog, NotificationBanner, PageNavigation, ProgressIndicator, Radio, RequirementBadge, ResourceList, SearchBox, Select, SeparatedDatePicker, Slot, StatusBadge, StepNavigation, SupportText, Switch, Tab, Table, Textarea, UtilityLink。
+
+### 色・文字・角丸
+
+`@digital-go-jp/tailwind-theme-plugin` が定義するデジタル庁デザインシステムの値を使う。Tailwind 標準の `gray-500` や `text-sm` は使わない。
+
+- 色: `key-*`、`solid-gray-*`、`error-*`、`success-*`、`warning-*` などの系統。例: `text-solid-gray-800`、`bg-key-900`
+- 文字: `text-std-16N-170` のような、サイズ・太さ・行間を1つにまとめたクラス。系統は `std`、`dns`、`oln`、`mono`、`dsp`
+- 角丸: `rounded-8` のようにピクセル数で指定する
+
+### shadcn/ui
+
+デジタル庁デザインシステムに無い部品は Tooltip、通知の sonner、DropdownMenu、Sidebar、Skeleton で、これらは shadcn/ui を使う。`src/index.css` で shadcn/ui の `--primary` などをデジタル庁デザインシステムの色へ対応づけてあるため、`bg-primary` のような shadcn/ui のクラスのままで見た目が揃う。
+
+デジタル庁デザインシステムに同じ部品がある shadcn/ui の import は、ESLint の `no-restricted-imports` でエラーにしている。既存の画面は置き換えが済むまで `eslint.config.js` で除外しており、置き換えたら除外の一覧から外す。
+
+`src/components/ui/` は shadcn/ui の CLI が自動生成するディレクトリである。手動での直接編集は行わず、ESLint の検証対象からも除外している。新しい部品が必要な場合は、以下の CLI コマンドで追加する。
+
+```bash
+cd frontend && npx shadcn add <component-name>
+```
 
 ## 状態
 

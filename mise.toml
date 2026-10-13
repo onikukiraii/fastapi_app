@@ -70,6 +70,21 @@ description = "Generate TypeScript types from OpenAPI schema"
 run = "npm run generate-api"
 dir = "frontend"
 
+[tasks."dads:add"]
+description = "Copy a component from the latest Digital Agency Design System React snippets into src/components/dads/"
+run = '''
+set -eu
+R=repos/digital-go-jp/design-system-example-components-react
+NAME={{arg(name="name")}}
+SHA=$(gh api "$R/commits/main" --jq .sha)
+mkdir -p "src/components/dads/$NAME"
+for f in $(gh api "$R/contents/src/components/$NAME?ref=$SHA" --jq '.[] | select(.type=="file") | .name' | grep -vE '\.(stories|test)\.tsx?$'); do
+  gh api "$R/contents/src/components/$NAME/$f?ref=$SHA" -H 'Accept: application/vnd.github.raw' > "src/components/dads/$NAME/$f"
+done
+echo "$NAME を $SHA から取り込みました"
+'''
+dir = "frontend"
+
 [tasks."format:front"]
 description = "Fix frontend lint issues"
 run = "npm run lint -- --fix"

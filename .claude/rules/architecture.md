@@ -29,6 +29,7 @@ frontend/src/                React 19 + TypeScript + Vite + Tailwind CSS v4
 ├── api/                     API クライアントと型
 ├── pages/                   ルーターが直接指す画面
 ├── layouts/                 レイアウト枠を定義し、Outlet で子要素を描画するコンポーネント
+├── components/dads/         デジタル庁デザインシステムから取り込んだ部品
 ├── components/ui/           shadcn/ui の CLI 生成物
 ├── components/              自前の共通コンポーネント
 ├── hooks/                   React のライフサイクルや state を扱うカスタムフック
@@ -101,6 +102,7 @@ Celery ワーカーからも `dependencies.py` の関数を呼び出す。FastAP
 
 - `pages/`: ルーターの `element` が直接指す画面。ファイル名は `<対象>Page.tsx`。
 - `layouts/`: レイアウト枠を定義し、`<Outlet />` で子要素を描画するコンポーネント。ファイル名は `<対象>Layout.tsx`。
+- `components/dads/`: デジタル庁デザインシステムの React 版コードスニペットから `mise run dads:add` で取り込んだ部品。型エラーの修正以外は手を入れず、ESLint の検証対象からも除外している。
 - `components/ui/`: shadcn/ui の CLI が自動生成するコンポーネント。手動で編集せず、ESLint の検証対象からも除外している。
 - `components/`: プロジェクト独自の共通コンポーネント。扱う対象を名詞で命名し、曖昧な `Shell` / `Wrapper` / `Container` といった名前は避ける。枠組みを構成するものは `Layout`、1つの値を扱うものは `Field`、状態や通知を伝えるものは `Notice` とする。
 - `hooks/`: React のライフサイクルまたは state（状態）に関わるカスタムフックのみを配置する。`use` プレフィックスは「コンポーネントのトップレベルで呼び出す」というフックのルール（Hooks の規約）を示すシグナルであるため、ここに純粋関数を混在させると関数の呼び出し規約が不明瞭になる。
